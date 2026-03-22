@@ -46,10 +46,10 @@ export class HUDScene extends Phaser.Scene {
 
     const hudY = GAME_HEIGHT + 5;
     const fontConfig: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontFamily: 'monospace',
+      fontFamily: 'SmileBASIC, monospace',
       fontSize: '10px',
       color: '#ffffff',
-      resolution: 2,
+      resolution: 5,
     };
 
     // Left panel: Radio log
@@ -73,10 +73,10 @@ export class HUDScene extends Phaser.Scene {
       color: '#88ff88',
     });
     this.hpBar = this.add.graphics();
-    this.hpText = this.add.text(hpBarX + 105, hudY + 12, '100/100', {
-      ...fontConfig,
-      fontSize: '9px',
-    });
+    // this.hpText = this.add.text(hpBarX + 105, hudY + 12, '100/100', {
+    //   ...fontConfig,
+    //   fontSize: '9px',
+    // });
 
     // Reload bar
     this.reloadBar = this.add.graphics();
@@ -89,13 +89,13 @@ export class HUDScene extends Phaser.Scene {
     });
 
     // Right panel: Weapon info
-    const wpnX = 300;
+    const wpnX = 270;
     this.weaponText = this.add.text(wpnX, hudY, 'Block17', {
       ...fontConfig,
       fontSize: '10px',
       color: '#ffcc88',
     });
-    this.ammoText = this.add.text(wpnX, hudY + 14, '残弾数: 11/11 | 30', {
+    this.ammoText = this.add.text(wpnX, hudY + 14, '残弾数: 11/11|30', {
       ...fontConfig,
       fontSize: '9px',
     });
@@ -146,7 +146,7 @@ export class HUDScene extends Phaser.Scene {
     this.hpBar.lineStyle(1, 0xffffff, 0.5);
     this.hpBar.strokeRect(hpBarX, hpBarY, hpBarWidth, hpBarHeight);
 
-    this.hpText.setText(`${hp}/${maxHp}`);
+    // this.hpText.setText(`${hp}/${maxHp}`);
 
     // Update reload bar
     this.reloadBar.clear();
@@ -167,13 +167,13 @@ export class HUDScene extends Phaser.Scene {
     const mag = player.currentAmmo;
     const magMax = player.weapon.magazineSize;
     const reserve = player.reserveAmmo;
-    this.ammoText.setText(`残弾数: ${mag}/${magMax} | ${reserve}`);
+    this.ammoText.setText(`残弾数: ${mag}/${magMax}|${reserve}`);
 
     // Update backup info
     const unitNames = ['PCPD', 'PCSP', 'SWAT'];
     const costs = [100, 200, 500];
     const idx = this.gameScene.selectedBackupUnit;
-    this.backupText.setText(`BACKUP: ${unitNames[idx]} (-${costs[idx]}pts)`);
+    this.backupText.setText(`BACKUP:${unitNames[idx]}(-${costs[idx]}pts)`);
 
     // Update radio log
     if (this.gameScene.radioSystem) {

@@ -591,12 +591,12 @@ export class GameScene extends Phaser.Scene {
       GAME_WIDTH / 2, GAME_HEIGHT / 2,
       'READY',
       {
-        fontFamily: 'monospace',
+        fontFamily: 'SmileBASIC, monospace',
         fontSize: '24px',
         color: '#ffffff',
         stroke: '#000000',
         strokeThickness: 3,
-        resolution: 2,
+        resolution: 5,
       },
     );
     readyText.setOrigin(0.5);

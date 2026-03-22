@@ -53,10 +53,10 @@ export class ScoreScene extends Phaser.Scene {
     }
 
     const font: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontFamily: 'monospace',
+      fontFamily: 'SmileBASIC, monospace',
       fontSize: '10px',
       color: '#ffffff',
-      resolution: 2,
+      resolution: 5,
     };
 
     // Header

@@ -88,10 +88,10 @@ export class CQCSystem {
       GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40,
       'PUSH!!!',
       {
-        fontFamily: 'monospace',
+        fontFamily: 'SmileBASIC, monospace',
         fontSize: '20px',
         color: '#ff4444',
-        resolution: 2,
+        resolution: 5,
       },
     );
     this.promptText.setOrigin(0.5);
@@ -103,10 +103,10 @@ export class CQCSystem {
       GAME_WIDTH / 2, GAME_HEIGHT / 2,
       this.getSequenceDisplay(),
       {
-        fontFamily: 'monospace',
+        fontFamily: 'SmileBASIC, monospace',
         fontSize: '28px',
         color: '#ffffff',
-        resolution: 2,
+        resolution: 5,
       },
     );
     this.sequenceText.setOrigin(0.5);

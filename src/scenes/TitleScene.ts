@@ -42,10 +42,10 @@ export class TitleScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#000000');
 
     const font: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontFamily: 'monospace',
+      fontFamily: 'SmileBASIC, monospace',
       fontSize: '10px',
       color: '#ffffff',
-      resolution: 2,
+      resolution: 5,
     };
 
     // Title
@@ -85,7 +85,7 @@ export class TitleScene extends Phaser.Scene {
     // Cursor
     this.cursorText = this.add.text(
       25, startY + this.selectedChapter * 18,
-      '▶', { ...font, color: '#ffff00' },
+      '', { ...font, color: '#ffff00' },
     );
 
     // High score display

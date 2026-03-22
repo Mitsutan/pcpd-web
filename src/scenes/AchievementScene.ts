@@ -33,10 +33,10 @@ export class AchievementScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#200000');
 
     const font: Phaser.Types.GameObjects.Text.TextStyle = {
-      fontFamily: 'monospace',
+      fontFamily: 'SmileBASIC, monospace',
       fontSize: '10px',
       color: '#ffffff',
-      resolution: 2,
+      resolution: 5,
     };
 
     this.add.text(GAME_WIDTH / 2, 20, 'ACHIEVEMENT', {

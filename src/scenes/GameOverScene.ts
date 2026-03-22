@@ -27,38 +27,38 @@ export class GameOverScene extends Phaser.Scene {
 
     // "YOU ARE DOWN" text
     this.add.text(GAME_WIDTH / 2, 80, 'YOU ARE DOWN', {
-      fontFamily: 'monospace',
+      fontFamily: 'SmileBASIC, monospace',
       fontSize: '20px',
       color: '#ff4444',
       stroke: '#000000',
       strokeThickness: 2,
-      resolution: 2,
+      resolution: 5,
     }).setOrigin(0.5);
 
     // Random tip
     const tip = TIPS[Math.floor(Math.random() * TIPS.length)];
     this.add.text(GAME_WIDTH / 2, 140, 'TIPS:', {
-      fontFamily: 'monospace',
+      fontFamily: 'SmileBASIC, monospace',
       fontSize: '10px',
       color: '#ffff88',
-      resolution: 2,
+      resolution: 5,
     }).setOrigin(0.5);
 
     this.add.text(GAME_WIDTH / 2, 160, tip, {
-      fontFamily: 'monospace',
+      fontFamily: 'SmileBASIC, monospace',
       fontSize: '10px',
       color: '#cccccc',
       wordWrap: { width: 350 },
       align: 'center',
-      resolution: 2,
+      resolution: 5,
     }).setOrigin(0.5);
 
     // Retry / Title options
     this.add.text(GAME_WIDTH / 2, 230, 'ENTER: リトライ    ESC: タイトルへ', {
-      fontFamily: 'monospace',
+      fontFamily: 'SmileBASIC, monospace',
       fontSize: '10px',
       color: '#888888',
-      resolution: 2,
+      resolution: 5,
     }).setOrigin(0.5);
 
     const kb = this.input.keyboard!;
