@@ -60,6 +60,10 @@ export class GameScene extends Phaser.Scene {
   // Track which enemies have already been CQC'd (prevent re-trigger)
   private cqcTarget: Enemy | null = null;
 
+  // Sight mode overlay + laser
+  private scopeOverlay!: Phaser.GameObjects.Graphics;
+  private laserGraphics!: Phaser.GameObjects.Graphics;
+
   constructor() {
     super({ key: SCENE_GAME });
   }
@@ -147,6 +151,16 @@ export class GameScene extends Phaser.Scene {
     this.damageOverlay.setScrollFactor(0);
     this.damageOverlay.setDepth(100);
 
+    // Scope overlay for sight mode (FOV restriction, hidden by default)
+    this.scopeOverlay = this.add.graphics();
+    this.scopeOverlay.setScrollFactor(0);
+    this.scopeOverlay.setDepth(99);
+    this.scopeOverlay.setVisible(false);
+
+    // Laser sight (weapon range indicator, always visible, drawn in world space)
+    this.laserGraphics = this.add.graphics();
+    this.laserGraphics.setDepth(7); // Below sprites but above floor
+
     // Launch HUD scene in parallel
     this.scene.launch(SCENE_HUD, { gameScene: this });
 
@@ -167,6 +181,24 @@ export class GameScene extends Phaser.Scene {
     if (!this.player.isAlive || this.gameEnding) return;
 
     const input = this.inputManager.getState();
+
+    // Compute aim angle: auto-aim at nearest enemy in sight mode, otherwise mouse
+    let aimAngle = input.aimAngle;
+    if (this.inputManager.isSightActive()) {
+      const autoAimAngle = this.findNearestEnemyAngle();
+      if (autoAimAngle !== null) {
+        aimAngle = autoAimAngle;
+      }
+    }
+
+    // Update scope overlay visibility
+    this.scopeOverlay.setVisible(this.inputManager.isSightActive());
+    if (this.inputManager.isSightActive()) {
+      this.drawScopeOverlay(aimAngle);
+    }
+
+    // Always draw laser sight (weapon range indicator)
+    this.drawLaser(aimAngle);
 
     // Handle weapon switch
     const weaponKey = this.inputManager.getWeaponNumberKey();
@@ -202,7 +234,7 @@ export class GameScene extends Phaser.Scene {
     this.player.update(
       input.moveX,
       input.moveY,
-      input.aimAngle,
+      aimAngle,
       input.dash,
       this.inputManager.isSightActive(),
     );
@@ -371,7 +403,7 @@ export class GameScene extends Phaser.Scene {
         if (!bullet.active || !bullet.visible) return;
         if (this.gameEnding) return;
 
-        const damage = 2 + Math.floor(Math.random() * 5);
+        const damage = 2 + Math.floor(Math.random() * 2);
         this.player.takeDamage(damage);
         this.showDamageFlash();
 
@@ -519,6 +551,84 @@ export class GameScene extends Phaser.Scene {
       delay: 1000,
       onComplete: () => readyText.destroy(),
     });
+  }
+
+  /** Find the angle from player to the nearest living enemy. Returns null if no enemies alive. */
+  private findNearestEnemyAngle(): number | null {
+    let minDist = Infinity;
+    let nearestEnemy: Enemy | null = null;
+
+    for (const enemy of this.enemies) {
+      if (enemy.isDead) continue;
+      const dist = Phaser.Math.Distance.Between(
+        this.player.sprite.x, this.player.sprite.y,
+        enemy.sprite.x, enemy.sprite.y,
+      );
+      if (dist < minDist) {
+        minDist = dist;
+        nearestEnemy = enemy;
+      }
+    }
+
+    if (!nearestEnemy) return null;
+
+    return Phaser.Math.Angle.Between(
+      this.player.sprite.x, this.player.sprite.y,
+      nearestEnemy.sprite.x, nearestEnemy.sprite.y,
+    );
+  }
+
+  /** Draw FOV restriction overlay: black everywhere except a view cone in aim direction. */
+  private drawScopeOverlay(aimAngle: number): void {
+    this.scopeOverlay.clear();
+
+    // Player's actual screen position (shifts from center when camera hits world bounds)
+    const cam = this.cameras.main;
+    const cx = this.player.sprite.x - cam.worldView.x;
+    const cy = this.player.sprite.y - cam.worldView.y;
+    const radius = Math.max(GAME_WIDTH, GAME_HEIGHT);
+    const halfFOV = Math.PI / 8; // 22.5° half-angle = 45° total FOV
+
+    // Dark overlay covering everything OUTSIDE the view cone
+    this.scopeOverlay.fillStyle(0x000000, 0.9);
+    this.scopeOverlay.beginPath();
+    this.scopeOverlay.moveTo(cx, cy);
+
+    // Arc from one edge of the cone, going the LONG way around (the dark area)
+    const coneEnd = aimAngle + halfFOV;
+    const coneStart = aimAngle - halfFOV;
+
+    // Draw the arc covering the non-visible area (from coneEnd back to coneStart, the long way)
+    const steps = 32;
+    const darkArcLength = Math.PI * 2 - halfFOV * 2;
+    for (let i = 0; i <= steps; i++) {
+      const a = coneEnd + (darkArcLength * i) / steps;
+      this.scopeOverlay.lineTo(
+        cx + Math.cos(a) * radius,
+        cy + Math.sin(a) * radius,
+      );
+    }
+
+    this.scopeOverlay.lineTo(cx, cy);
+    this.scopeOverlay.closePath();
+    this.scopeOverlay.fillPath();
+  }
+
+  /** Draw red laser line showing weapon range from player in aim direction. */
+  private drawLaser(aimAngle: number): void {
+    this.laserGraphics.clear();
+
+    const px = this.player.sprite.x;
+    const py = this.player.sprite.y;
+    const rangePixels = this.player.weapon.range * 16;
+
+    this.laserGraphics.lineStyle(1, 0xff0000, 0.6);
+    this.laserGraphics.lineBetween(
+      px + Math.cos(aimAngle) * 10,
+      py + Math.sin(aimAngle) * 10,
+      px + Math.cos(aimAngle) * rangePixels,
+      py + Math.sin(aimAngle) * rangePixels,
+    );
   }
 
   private startCQC(enemy: Enemy): void {

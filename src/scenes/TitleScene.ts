@@ -1,89 +1,136 @@
 import Phaser from 'phaser';
-import { SCENE_TITLE, SCENE_GAME, SCENE_HUD, GAME_WIDTH, GAME_HEIGHT, TOTAL_HEIGHT } from '../constants';
+import { SCENE_TITLE, SCENE_GAME, SCENE_ACHIEVEMENT, GAME_WIDTH, TOTAL_HEIGHT } from '../constants';
+
+const CHAPTER_BRIEFINGS = [
+  '時は1999年、ここ「Petit City」では犯罪が急激に増加。\n'
+  + 'PCPDでは警察官の数が圧倒的に不足していた。\n'
+  + '警察官「マイケル・デッカート」は宝石店強盗の\n'
+  + '通報を受け、現場に急行するのであった...',
+
+  '犯人グループの一部を取り逃してしまったPCPD。\n'
+  + '事後捜査に切り替えて現場付近を巡回していると\n'
+  + '銀行強盗に遭遇する。無事に制圧することが\n'
+  + 'できるのか。',
+
+  '逮捕した犯人グループのメンバーを問い詰め、\n'
+  + 'ボス通称「Juggernaut」の居場所が判明した。\n'
+  + '彼を逮捕できれば町の治安は大幅に改善する\n'
+  + 'はずだ。PCPDは全部隊を確保に向かわせた。',
+
+  'これまでの事件はPCPDの戦力を減らし、注意を\n'
+  + 'そらすことが目的だったのだ。急いで追跡に\n'
+  + '向かう。最後に勝つのははたして...',
+];
 
 export class TitleScene extends Phaser.Scene {
   private selectedChapter: number = 0;
   private maxUnlockedChapter: number = 0;
+  private chapterScores: number[] = [0, 0, 0, 0];
   private cursorText!: Phaser.GameObjects.Text;
   private chapterTexts: Phaser.GameObjects.Text[] = [];
+  private briefingText!: Phaser.GameObjects.Text;
+  private scoreText!: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: SCENE_TITLE });
   }
 
   create(): void {
-    // Load save data
+    this.chapterTexts = [];
     this.loadSaveData();
 
-    // Background
     this.cameras.main.setBackgroundColor('#000000');
 
-    // Title logo
-    const logo = this.add.sprite(GAME_WIDTH / 2, 80, 'spritesheet-raw', 'logo_pcpd');
-    logo.setScale(0.5);
-
-    // Title text
-    this.add.text(GAME_WIDTH / 2, 150, 'PCPD - Code 3', {
-      fontFamily: 'monospace',
-      fontSize: '16px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      resolution: 2,
-    }).setOrigin(0.5);
-
-    this.add.text(GAME_WIDTH / 2, 170, 'Petit City Police Department', {
+    const font: Phaser.Types.GameObjects.Text.TextStyle = {
       fontFamily: 'monospace',
       fontSize: '10px',
-      color: '#aaaaaa',
+      color: '#ffffff',
       resolution: 2,
+    };
+
+    // Title
+    this.add.text(GAME_WIDTH / 2, 20, 'PCPD - Code 3', {
+      ...font,
+      fontSize: '16px',
+      fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    // Version
-    this.add.text(GAME_WIDTH - 10, TOTAL_HEIGHT - 10, 'v1.2 Browser Port', {
-      fontFamily: 'monospace',
+    this.add.text(GAME_WIDTH / 2, 38, 'Petit City Police Department', {
+      ...font,
       fontSize: '8px',
-      color: '#555555',
-      resolution: 2,
-    }).setOrigin(1, 1);
+      color: '#aaaaaa',
+    }).setOrigin(0.5);
 
     // Chapter select
-    const chapters = ['Chapter 1: 宝石店強盗', 'Chapter 2: 銀行強盗', 'Chapter 3: アジト急襲', 'Chapter 4: 最終追跡'];
+    const chapters = [
+      'CHAPTER 1: 宝石店強盗',
+      'CHAPTER 2: 銀行強盗',
+      'CHAPTER 3: アジト急襲',
+      'CHAPTER 4: 最終追跡',
+    ];
 
-    const startY = 200;
+    const startY = 60;
     for (let i = 0; i < chapters.length; i++) {
-      const color = i <= this.maxUnlockedChapter ? '#ffffff' : '#555555';
-      const text = this.add.text(GAME_WIDTH / 2, startY + i * 22, chapters[i], {
-        fontFamily: 'monospace',
-        fontSize: '11px',
+      const unlocked = i <= this.maxUnlockedChapter;
+      const label = unlocked ? chapters[i] : chapters[i] + ' [未開放]';
+      const color = unlocked ? '#ffffff' : '#555555';
+      const text = this.add.text(40, startY + i * 18, label, {
+        ...font,
+        fontSize: '10px',
         color,
-        resolution: 2,
-      }).setOrigin(0.5);
+      });
       this.chapterTexts.push(text);
     }
 
-    // Cursor indicator
+    // Cursor
     this.cursorText = this.add.text(
-      GAME_WIDTH / 2 - 120,
-      startY + this.selectedChapter * 22,
-      '▶',
-      { fontFamily: 'monospace', fontSize: '11px', color: '#ffff00', resolution: 2 },
-    ).setOrigin(0.5);
+      25, startY + this.selectedChapter * 18,
+      '▶', { ...font, color: '#ffff00' },
+    );
 
-    // Controls hint
-    this.add.text(GAME_WIDTH / 2, TOTAL_HEIGHT - 30, 'W/S: 選択  ENTER: 決定', {
-      fontFamily: 'monospace',
+    // High score display
+    this.scoreText = this.add.text(GAME_WIDTH - 20, startY, '', {
+      ...font,
       fontSize: '9px',
+      color: '#ffff88',
+      align: 'right',
+    }).setOrigin(1, 0);
+    this.updateScoreDisplay();
+
+    // Briefing area
+    this.add.text(20, 142, '── BRIEFING ──', {
+      ...font,
+      fontSize: '8px',
+      color: '#668888',
+    });
+
+    this.briefingText = this.add.text(20, 155, '', {
+      ...font,
+      fontSize: '8px',
       color: '#888888',
-      resolution: 2,
+      lineSpacing: 2,
+    });
+    this.updateBriefing();
+
+    // Bottom navigation
+    this.add.text(GAME_WIDTH / 2, TOTAL_HEIGHT - 42, 'W/S: 選択  ENTER: 決定  B: 実績', {
+      ...font,
+      fontSize: '8px',
+      color: '#888888',
     }).setOrigin(0.5);
 
-    // Warning text
-    this.add.text(GAME_WIDTH / 2, TOTAL_HEIGHT - 15, 'このゲームには流血等の表現が含まれています', {
-      fontFamily: 'monospace',
-      fontSize: '8px',
+    this.add.text(GAME_WIDTH / 2, TOTAL_HEIGHT - 28, 'このゲームには流血等の表現が含まれています', {
+      ...font,
+      fontSize: '7px',
       color: '#ff4444',
-      resolution: 2,
     }).setOrigin(0.5);
+
+    // Version
+    this.add.text(GAME_WIDTH - 5, TOTAL_HEIGHT - 5, 'v1.2 Browser Port', {
+      ...font,
+      fontSize: '7px',
+      color: '#444444',
+    }).setOrigin(1, 1);
 
     // Input
     const kb = this.input.keyboard!;
@@ -93,6 +140,7 @@ export class TitleScene extends Phaser.Scene {
     kb.on('keydown-DOWN', () => this.moveSelection(1));
     kb.on('keydown-ENTER', () => this.startChapter());
     kb.on('keydown-SPACE', () => this.startChapter());
+    kb.on('keydown-B', () => this.scene.start(SCENE_ACHIEVEMENT));
   }
 
   private moveSelection(dir: number): void {
@@ -101,12 +149,36 @@ export class TitleScene extends Phaser.Scene {
       0,
       Math.min(3, this.maxUnlockedChapter),
     );
-    this.cursorText.setY(200 + this.selectedChapter * 22);
+    this.cursorText.setY(60 + this.selectedChapter * 18);
+    this.updateBriefing();
+    this.updateScoreDisplay();
+  }
+
+  private updateBriefing(): void {
+    if (this.selectedChapter <= this.maxUnlockedChapter) {
+      this.briefingText.setText(CHAPTER_BRIEFINGS[this.selectedChapter]);
+    } else {
+      this.briefingText.setText('未開放');
+    }
+  }
+
+  private updateScoreDisplay(): void {
+    const lines: string[] = [];
+    for (let i = 0; i < 4; i++) {
+      if (i <= this.maxUnlockedChapter) {
+        const score = this.chapterScores[i];
+        lines.push(score > 0 ? `SCORE: ${score}` : '---');
+      } else {
+        lines.push('');
+      }
+    }
+    this.scoreText.setText(lines.join('\n'));
+    // Set line spacing to match chapter list
+    this.scoreText.setLineSpacing(8);
   }
 
   private startChapter(): void {
     if (this.selectedChapter > this.maxUnlockedChapter) return;
-
     this.scene.start(SCENE_GAME, { chapter: this.selectedChapter + 1 });
   }
 
@@ -115,16 +187,17 @@ export class TitleScene extends Phaser.Scene {
       const raw = localStorage.getItem('pcpd_save');
       if (raw) {
         const data = JSON.parse(raw);
-        // Find highest unlocked chapter
         this.maxUnlockedChapter = 0;
         for (let i = 0; i < 4; i++) {
           if (data.chapterUnlocks?.[i]) {
             this.maxUnlockedChapter = i;
           }
         }
+        if (data.chapterScores) {
+          this.chapterScores = data.chapterScores;
+        }
       }
     } catch {
-      // Default: only chapter 1 unlocked
       this.maxUnlockedChapter = 0;
     }
   }

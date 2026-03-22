@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_WIDTH, TOTAL_HEIGHT, SCENE_BOOT, SCENE_TITLE, SCENE_GAME, SCENE_HUD, SCENE_GAMEOVER, SCENE_SCORE, SCENE_CUTSCENE } from './constants';
+import { GAME_WIDTH, TOTAL_HEIGHT } from './constants';
 import { BootScene } from './scenes/BootScene';
 import { TitleScene } from './scenes/TitleScene';
 import { GameScene } from './scenes/GameScene';
@@ -7,6 +7,7 @@ import { HUDScene } from './scenes/HUDScene';
 import { GameOverScene } from './scenes/GameOverScene';
 import { ScoreScene } from './scenes/ScoreScene';
 import { CutsceneScene } from './scenes/CutsceneScene';
+import { AchievementScene } from './scenes/AchievementScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -25,7 +26,7 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene, TitleScene, GameScene, HUDScene, CutsceneScene, GameOverScene, ScoreScene],
+  scene: [BootScene, TitleScene, GameScene, HUDScene, CutsceneScene, GameOverScene, ScoreScene, AchievementScene],
 };
 
 new Phaser.Game(config);

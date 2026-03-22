@@ -39,6 +39,7 @@ export const SCENE_HUD = 'HUDScene';
 export const SCENE_CUTSCENE = 'CutsceneScene';
 export const SCENE_GAMEOVER = 'GameOverScene';
 export const SCENE_SCORE = 'ScoreScene';
+export const SCENE_ACHIEVEMENT = 'AchievementScene';
 
 // Asset keys
 export const ATLAS_KEY = 'pcpd';
