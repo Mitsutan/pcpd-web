@@ -77,6 +77,8 @@ export class Enemy {
     // Fire if in range
     if (nearestDist <= 100 && Phaser.Math.Between(0, this.fireRate - 1) === 0) {
       fireBulletCallback(this.sprite.x, this.sprite.y, angle);
+      // Play muzzle flash
+      this.weaponSprite.play('handgun_flash');
     }
 
     // Patrol movement

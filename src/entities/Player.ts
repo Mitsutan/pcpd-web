@@ -134,6 +134,11 @@ export class Player {
     this.currentAmmo--;
     this.shotsFired++;
     this.lastFireTime = this.scene.time.now;
+
+    // Play muzzle flash animation
+    const flashAnims = ['handgun_flash', 'rifle_flash', 'sniper_flash', 'baton_swing'];
+    const animKey = flashAnims[this.currentWeaponIndex] || 'handgun_flash';
+    this.weaponSprite.play(animKey);
   }
 
   startReload(): void {

@@ -86,6 +86,8 @@ export class Ally {
     const firePixelRange = this.fireRange * 15 + 75;
     if (nearestDist <= firePixelRange && Phaser.Math.Between(0, this.fireRate - 1) === 0) {
       fireBulletCallback(this.sprite.x, this.sprite.y, angle);
+      // Play muzzle flash (all allies use handgun)
+      this.weaponSprite.play('handgun_flash');
     }
 
     // Move toward enemy (1/20 chance when idle)

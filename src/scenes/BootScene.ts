@@ -333,5 +333,109 @@ export class BootScene extends Phaser.Scene {
       frameRate: 8,
       repeat: 0,
     });
+
+    // Police car siren animation (SPDEF 120→124→254)
+    this.anims.create({
+      key: 'police_car_siren',
+      frames: [
+        { key: 'spritesheet-raw', frame: 'police_car_0' },
+        { key: 'spritesheet-raw', frame: 'police_car_1' },
+        { key: 'spritesheet-raw', frame: 'police_car_2' },
+      ],
+      frameRate: 12,
+      repeat: -1,
+    });
+
+    // PCSP car siren animation
+    this.anims.create({
+      key: 'pcsp_car_siren',
+      frames: [
+        { key: 'spritesheet-raw', frame: 'pcsp_car_0' },
+        { key: 'spritesheet-raw', frame: 'pcsp_car_1' },
+        { key: 'spritesheet-raw', frame: 'pcsp_car_2' },
+      ],
+      frameRate: 12,
+      repeat: -1,
+    });
+
+    // SWAT car siren animation
+    this.anims.create({
+      key: 'swat_car_siren',
+      frames: [
+        { key: 'spritesheet-raw', frame: 'swat_car_0' },
+        { key: 'spritesheet-raw', frame: 'swat_car_1' },
+        { key: 'spritesheet-raw', frame: 'swat_car_2' },
+      ],
+      frameRate: 12,
+      repeat: -1,
+    });
+
+    // Bullet hit effect animation (SPDEF 15→16)
+    this.anims.create({
+      key: 'bullet_hit',
+      frames: [
+        { key: 'spritesheet-raw', frame: 'effect_1' },
+        { key: 'spritesheet-raw', frame: 'effect_2' },
+      ],
+      frameRate: 12,
+      repeat: 0,
+    });
+
+    // Weapon muzzle flash animations
+    // Handgun muzzle flash (SPDEF 10→11→12→13→10)
+    this.anims.create({
+      key: 'handgun_flash',
+      frames: [
+        { key: 'spritesheet-raw', frame: 'handgun_0' },
+        { key: 'spritesheet-raw', frame: 'handgun_1' },
+        { key: 'spritesheet-raw', frame: 'handgun_2' },
+        { key: 'spritesheet-raw', frame: 'handgun_3' },
+        { key: 'spritesheet-raw', frame: 'handgun_0' },
+      ],
+      frameRate: 20,
+      repeat: 0,
+    });
+
+    // Rifle muzzle flash (SPDEF 20→21→22→23→20)
+    this.anims.create({
+      key: 'rifle_flash',
+      frames: [
+        { key: 'spritesheet-raw', frame: 'rifle_0' },
+        { key: 'spritesheet-raw', frame: 'rifle_1' },
+        { key: 'spritesheet-raw', frame: 'rifle_2' },
+        { key: 'spritesheet-raw', frame: 'rifle_3' },
+        { key: 'spritesheet-raw', frame: 'rifle_0' },
+      ],
+      frameRate: 20,
+      repeat: 0,
+    });
+
+    // Sniper muzzle flash (SPDEF 30→31→32→33→30)
+    this.anims.create({
+      key: 'sniper_flash',
+      frames: [
+        { key: 'spritesheet-raw', frame: 'sniper_0' },
+        { key: 'spritesheet-raw', frame: 'sniper_1' },
+        { key: 'spritesheet-raw', frame: 'sniper_2' },
+        { key: 'spritesheet-raw', frame: 'sniper_3' },
+        { key: 'spritesheet-raw', frame: 'sniper_0' },
+      ],
+      frameRate: 20,
+      repeat: 0,
+    });
+
+    // Baton swing (SPDEF 40→41→42→43→40)
+    this.anims.create({
+      key: 'baton_swing',
+      frames: [
+        { key: 'spritesheet-raw', frame: 'baton_0' },
+        { key: 'spritesheet-raw', frame: 'baton_1' },
+        { key: 'spritesheet-raw', frame: 'baton_2' },
+        { key: 'spritesheet-raw', frame: 'baton_3' },
+        { key: 'spritesheet-raw', frame: 'baton_0' },
+      ],
+      frameRate: 20,
+      repeat: 0,
+    });
   }
 }

@@ -349,6 +349,9 @@ export class GameScene extends Phaser.Scene {
         const killed = enemyObj.takeDamage(damage);
         this.player.shotsHit++;
 
+        // Spawn blood effect
+        this.spawnBulletHitEffect(bullet.x, bullet.y, true);
+
         if (killed) {
           this.deathCount++;
           this.score += 100;
@@ -373,6 +376,9 @@ export class GameScene extends Phaser.Scene {
         const damage = bullet.getData('damage') as number;
         const killed = allyObj.takeDamage(damage);
 
+        // Spawn blood effect
+        this.spawnBulletHitEffect(bullet.x, bullet.y, true);
+
         this.radioSystem.forceSend('FF');
 
         if (killed) {
@@ -390,6 +396,10 @@ export class GameScene extends Phaser.Scene {
       (_bulletSprite) => {
         const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
         if (!bullet.active || !bullet.visible) return;
+
+        // Spawn spark effect
+        this.spawnBulletHitEffect(bullet.x, bullet.y, false);
+
         this.playerBullets.deactivateBullet(bullet);
       },
     );
@@ -407,6 +417,9 @@ export class GameScene extends Phaser.Scene {
         this.player.takeDamage(damage);
         this.showDamageFlash();
 
+        // Spawn blood effect
+        this.spawnBulletHitEffect(bullet.x, bullet.y, true);
+
         if (!this.player.isAlive) {
           this.onPlayerDeath();
         }
@@ -422,6 +435,10 @@ export class GameScene extends Phaser.Scene {
       (_bulletSprite) => {
         const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
         if (!bullet.active || !bullet.visible) return;
+
+        // Spawn spark effect
+        this.spawnBulletHitEffect(bullet.x, bullet.y, false);
+
         this.enemyBullets.deactivateBullet(bullet);
       },
     );
@@ -440,6 +457,9 @@ export class GameScene extends Phaser.Scene {
         const damage = bullet.getData('damage') as number;
         const killed = enemyObj.takeDamage(damage);
 
+        // Spawn blood effect
+        this.spawnBulletHitEffect(bullet.x, bullet.y, true);
+
         if (killed) {
           this.deathCount++;
           this.score += 50;
@@ -457,6 +477,10 @@ export class GameScene extends Phaser.Scene {
       (_bulletSprite) => {
         const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
         if (!bullet.active || !bullet.visible) return;
+
+        // Spawn spark effect
+        this.spawnBulletHitEffect(bullet.x, bullet.y, false);
+
         this.allyBullets.deactivateBullet(bullet);
       },
     );
@@ -474,6 +498,10 @@ export class GameScene extends Phaser.Scene {
 
         const damage = bullet.getData('damage') as number;
         const killed = allyObj.takeDamage(damage);
+
+        // Spawn blood effect
+        this.spawnBulletHitEffect(bullet.x, bullet.y, true);
+
         this.radioSystem.send('DAMAGE');
 
         if (killed) {
@@ -512,6 +540,31 @@ export class GameScene extends Phaser.Scene {
 
   private fireAllyBullet(x: number, y: number, angle: number): void {
     this.allyBullets.fire(x, y, angle, 5, 4);
+  }
+
+  private spawnBulletHitEffect(x: number, y: number, isBloodEffect: boolean): void {
+    // Create hit effect sprite (SPDEF 15→16 animation)
+    const effect = this.add.sprite(x, y, 'spritesheet-raw', 'effect_1');
+    effect.setDepth(100);
+    effect.setScale(2);
+
+    // Random rotation
+    effect.setRotation(Phaser.Math.FloatBetween(0, Math.PI * 2));
+
+    // Set color: red for blood (enemy/ally hit), yellow for sparks (wall hit)
+    if (isBloodEffect) {
+      effect.setTint(0xff0000); // Red
+    } else {
+      effect.setTint(0xffff00); // Yellow
+    }
+
+    // Play hit animation
+    effect.play('bullet_hit');
+
+    // Destroy after animation completes
+    effect.once('animationcomplete', () => {
+      effect.destroy();
+    });
   }
 
   private showDamageFlash(): void {

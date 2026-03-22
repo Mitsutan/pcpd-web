@@ -35,6 +35,15 @@ export class MapObject {
 
     // Store reference to this object on the sprite
     this.sprite.setData('mapObject', this);
+
+    // Play siren animation for police vehicles
+    if (type === 'police_car_0') {
+      this.sprite.play('police_car_siren');
+    } else if (type === 'pcsp_car_0') {
+      this.sprite.play('pcsp_car_siren');
+    } else if (type === 'swat_car_0') {
+      this.sprite.play('swat_car_siren');
+    }
   }
 
   takeDamage(amount: number): boolean {
