@@ -232,6 +232,13 @@ export class BootScene extends Phaser.Scene {
       repeat: -1,
     });
 
+    // Enemy idle animation (use middle frame of walk cycle)
+    this.anims.create({
+      key: 'enemy_idle',
+      frames: [{ key: 'spritesheet-raw', frame: 'enemy_113' }],
+      frameRate: 1,
+    });
+
     // Enemy death animation (SPDEF 35-38: arrest/surrender)
     this.anims.create({
       key: 'enemy_death',
@@ -284,6 +291,13 @@ export class BootScene extends Phaser.Scene {
       repeat: -1,
     });
 
+    // PCSP idle animation (use middle frame of walk cycle)
+    this.anims.create({
+      key: 'pcsp_idle',
+      frames: [{ key: 'spritesheet-raw', frame: 'pcsp_53' }],
+      frameRate: 1,
+    });
+
     // PCSP death animation (SPDEF 56-58)
     this.anims.create({
       key: 'pcsp_death',
@@ -308,6 +322,13 @@ export class BootScene extends Phaser.Scene {
       ],
       frameRate: 10,
       repeat: -1,
+    });
+
+    // SWAT idle animation (use middle frame of walk cycle)
+    this.anims.create({
+      key: 'swat_idle',
+      frames: [{ key: 'spritesheet-raw', frame: 'swat_63' }],
+      frameRate: 1,
     });
 
     // SWAT death animation (SPDEF 66-68)

@@ -16,6 +16,8 @@ export class Ally {
   private isMoving: boolean = false;
   private moveTimer: number = 0;
   private lastFireTime: number = 0;
+  private walkAnimKey: string;
+  private idleAnimKey: string;
 
   constructor(scene: Phaser.Scene, x: number, y: number, stats: AllyTypeStats) {
     this.scene = scene;
@@ -27,16 +29,18 @@ export class Ally {
 
     // Choose animation based on type
     let frame: string;
-    let walkAnim: string;
     if (stats.typeId === 'PCSP') {
       frame = 'pcsp_51';
-      walkAnim = 'pcsp_walk';
+      this.walkAnimKey = 'pcsp_walk';
+      this.idleAnimKey = 'pcsp_idle';
     } else if (stats.typeId === 'SWAT') {
       frame = 'swat_61';
-      walkAnim = 'swat_walk';
+      this.walkAnimKey = 'swat_walk';
+      this.idleAnimKey = 'swat_idle';
     } else {
       frame = 'player_1'; // PCPD uses same sprites as player (player_0 is armless base)
-      walkAnim = 'player_walk';
+      this.walkAnimKey = 'player_walk';
+      this.idleAnimKey = 'player_idle';
     }
 
     this.sprite = scene.physics.add.sprite(x, y, 'spritesheet-raw', frame);
@@ -49,8 +53,6 @@ export class Ally {
     this.weaponSprite = scene.add.sprite(x, y, 'spritesheet-raw', weaponFrame);
     this.weaponSprite.setOrigin(0.5, 1);
     this.weaponSprite.setDepth(9);
-
-    this.sprite.play(walkAnim);
   }
 
   update(
@@ -104,9 +106,20 @@ export class Ally {
 
     if (this.isMoving) {
       this.moveTimer--;
+
+      // Play walk animation if not already playing
+      if (!this.sprite.anims.isPlaying || this.sprite.anims.currentAnim?.key !== this.walkAnimKey) {
+        this.sprite.play(this.walkAnimKey);
+      }
+
       if (this.moveTimer <= 0) {
         this.isMoving = false;
         this.sprite.setVelocity(0, 0);
+      }
+    } else {
+      // Play idle animation when not moving
+      if (!this.sprite.anims.isPlaying || this.sprite.anims.currentAnim?.key !== this.idleAnimKey) {
+        this.sprite.play(this.idleAnimKey, true);
       }
     }
   }

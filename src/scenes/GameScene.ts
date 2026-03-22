@@ -775,6 +775,9 @@ export class GameScene extends Phaser.Scene {
     if (this.gameEnding) return;
     this.gameEnding = true;
 
+    // Play player death animation
+    this.player.sprite.play('player_death');
+
     // Pause physics immediately to prevent further collision callbacks
     this.physics.world.pause();
 

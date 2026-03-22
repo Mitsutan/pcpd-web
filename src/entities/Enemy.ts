@@ -42,8 +42,6 @@ export class Enemy {
     this.weaponSprite = scene.add.sprite(x, y, 'spritesheet-raw', 'handgun_0');
     this.weaponSprite.setOrigin(0.5, 1);
     this.weaponSprite.setDepth(9);
-
-    this.sprite.play('enemy_walk');
   }
 
   update(
@@ -102,9 +100,19 @@ export class Enemy {
         this.sprite.x += speed * this.patrolDirection;
       }
 
+      // Play walk animation if not already playing
+      if (!this.sprite.anims.isPlaying || this.sprite.anims.currentAnim?.key !== 'enemy_walk') {
+        this.sprite.play('enemy_walk');
+      }
+
       if (this.patrolTimer <= 0) {
         this.isPatrolling = false;
         this.patrolDirection *= -1;
+      }
+    } else {
+      // Play idle animation when not moving
+      if (!this.sprite.anims.isPlaying || this.sprite.anims.currentAnim?.key !== 'enemy_idle') {
+        this.sprite.play('enemy_idle', true);
       }
     }
   }
