@@ -54,6 +54,8 @@ export class BulletPool {
     body.setSize(6, 6);
     body.setOffset(-2, -2);
     sprite.setData('damage', damage);
+    sprite.setData('isBullet', true); // Mark as bullet for collision detection
+    sprite.setData('bulletProcessed', false); // Mark as not yet processed
     bulletData.active = true;
 
     // Calculate target position based on range
@@ -67,10 +69,12 @@ export class BulletPool {
     const vy = Math.sin(angle) * speed;
     sprite.setVelocity(vx, vy);
 
-    // Auto-deactivate after travel time
-    const firedIndex = this.currentIndex;
+    // Auto-deactivate after travel time (only if still active)
     this.scene.time.delayedCall(500, () => {
-      this.deactivateBullet(firedIndex);
+      // Check if this specific bullet sprite is still active before deactivating
+      if (sprite.active && sprite.visible) {
+        this.deactivateBullet(sprite);
+      }
     });
 
     // Advance index (circular buffer)

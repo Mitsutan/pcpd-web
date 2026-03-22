@@ -348,6 +348,11 @@ export class GameScene extends Phaser.Scene {
         const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
         if (!bullet.active || !bullet.visible) return;
 
+        // Immediately disable physics body to prevent multi-hit in same frame
+        const bulletBody = bullet.body as Phaser.Physics.Arcade.Body;
+        if (!bulletBody.enable) return; // Already processed
+        bulletBody.enable = false;
+
         const enemyObj = (_enemySprite as Phaser.Physics.Arcade.Sprite).getData('enemy') as Enemy;
         if (!enemyObj || enemyObj.isDead) return;
 
@@ -376,6 +381,11 @@ export class GameScene extends Phaser.Scene {
         const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
         if (!bullet.active || !bullet.visible) return;
 
+        // Immediately disable physics body to prevent multi-hit in same frame
+        const bulletBody = bullet.body as Phaser.Physics.Arcade.Body;
+        if (!bulletBody.enable) return; // Already processed
+        bulletBody.enable = false;
+
         const allyObj = (_allySprite as Phaser.Physics.Arcade.Sprite).getData('ally') as Ally;
         if (!allyObj || allyObj.isDead) return;
 
@@ -403,6 +413,11 @@ export class GameScene extends Phaser.Scene {
         const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
         if (!bullet.active || !bullet.visible) return;
 
+        // Immediately disable physics body to prevent multi-hit in same frame
+        const bulletBody = bullet.body as Phaser.Physics.Arcade.Body;
+        if (!bulletBody.enable) return; // Already processed
+        bulletBody.enable = false;
+
         // Spawn spark effect
         this.spawnBulletHitEffect(bullet.x, bullet.y, false);
 
@@ -414,12 +429,24 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(
       this.enemyBullets.group,
       this.player.sprite,
-      (_bulletSprite) => {
-        const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
+      (_obj1, _obj2) => {
+        // Determine which object is the bullet (Phaser may pass arguments in either order)
+        const obj1 = _obj1 as Phaser.Physics.Arcade.Sprite;
+        const obj2 = _obj2 as Phaser.Physics.Arcade.Sprite;
+        const bullet = obj1.getData('isBullet') ? obj1 : obj2;
+
         if (!bullet.active || !bullet.visible) return;
         if (this.gameEnding) return;
 
-        const damage = 2 + Math.floor(Math.random() * 2);
+        // Check if already processed this frame
+        if (bullet.getData('bulletProcessed')) return;
+        bullet.setData('bulletProcessed', true);
+
+        // Immediately disable bullet's physics body to prevent multi-hit
+        const bulletBody = bullet.body as Phaser.Physics.Arcade.Body;
+        bulletBody.enable = false;
+
+        const damage = 2 + Math.floor(Math.random() * 5);
         this.player.takeDamage(damage);
         this.showDamageFlash();
 
@@ -442,6 +469,11 @@ export class GameScene extends Phaser.Scene {
         const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
         if (!bullet.active || !bullet.visible) return;
 
+        // Immediately disable physics body to prevent multi-hit in same frame
+        const bulletBody = bullet.body as Phaser.Physics.Arcade.Body;
+        if (!bulletBody.enable) return; // Already processed
+        bulletBody.enable = false;
+
         // Spawn spark effect
         this.spawnBulletHitEffect(bullet.x, bullet.y, false);
 
@@ -456,6 +488,11 @@ export class GameScene extends Phaser.Scene {
       (_bulletSprite, _enemySprite) => {
         const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
         if (!bullet.active || !bullet.visible) return;
+
+        // Immediately disable physics body to prevent multi-hit in same frame
+        const bulletBody = bullet.body as Phaser.Physics.Arcade.Body;
+        if (!bulletBody.enable) return; // Already processed
+        bulletBody.enable = false;
 
         const enemyObj = (_enemySprite as Phaser.Physics.Arcade.Sprite).getData('enemy') as Enemy;
         if (!enemyObj || enemyObj.isDead) return;
@@ -484,6 +521,11 @@ export class GameScene extends Phaser.Scene {
         const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
         if (!bullet.active || !bullet.visible) return;
 
+        // Immediately disable physics body to prevent multi-hit in same frame
+        const bulletBody = bullet.body as Phaser.Physics.Arcade.Body;
+        if (!bulletBody.enable) return; // Already processed
+        bulletBody.enable = false;
+
         // Spawn spark effect
         this.spawnBulletHitEffect(bullet.x, bullet.y, false);
 
@@ -498,6 +540,11 @@ export class GameScene extends Phaser.Scene {
       (_bulletSprite, _allySprite) => {
         const bullet = _bulletSprite as Phaser.Physics.Arcade.Sprite;
         if (!bullet.active || !bullet.visible) return;
+
+        // Immediately disable physics body to prevent multi-hit in same frame
+        const bulletBody = bullet.body as Phaser.Physics.Arcade.Body;
+        if (!bulletBody.enable) return; // Already processed
+        bulletBody.enable = false;
 
         const allyObj = (_allySprite as Phaser.Physics.Arcade.Sprite).getData('ally') as Ally;
         if (!allyObj || allyObj.isDead) return;
