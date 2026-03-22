@@ -19,6 +19,7 @@ export class Enemy {
   private isPatrolling: boolean = false;
   private patrolTimer: number = 0;
   private patrolDirection: number = 1;
+  private lastFireTime: number = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number, stats: EnemyTypeStats) {
     this.scene = scene;
@@ -75,10 +76,16 @@ export class Enemy {
     this.weaponSprite.setRotation(angle + Math.PI / 2);
 
     // Fire if in range
-    if (nearestDist <= 100 && Phaser.Math.Between(0, this.fireRate - 1) === 0) {
+    const now = this.scene.time.now;
+    const canFire = nearestDist <= 100
+      && (now - this.lastFireTime >= 2000) // Minimum 2 second cooldown
+      && Phaser.Math.Between(0, this.fireRate - 1) === 0;
+
+    if (canFire) {
       fireBulletCallback(this.sprite.x, this.sprite.y, angle);
       // Play muzzle flash
       this.weaponSprite.play('handgun_flash');
+      this.lastFireTime = now;
     }
 
     // Patrol movement

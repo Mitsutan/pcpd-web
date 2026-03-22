@@ -15,6 +15,7 @@ export class Ally {
   private scene: Phaser.Scene;
   private isMoving: boolean = false;
   private moveTimer: number = 0;
+  private lastFireTime: number = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number, stats: AllyTypeStats) {
     this.scene = scene;
@@ -84,10 +85,16 @@ export class Ally {
 
     // Fire if in range
     const firePixelRange = this.fireRange * 15 + 75;
-    if (nearestDist <= firePixelRange && Phaser.Math.Between(0, this.fireRate - 1) === 0) {
+    const now = this.scene.time.now;
+    const canFire = nearestDist <= firePixelRange
+      && (now - this.lastFireTime >= 2000) // Minimum 2 second cooldown
+      && Phaser.Math.Between(0, this.fireRate - 1) === 0;
+
+    if (canFire) {
       fireBulletCallback(this.sprite.x, this.sprite.y, angle);
       // Play muzzle flash (all allies use handgun)
       this.weaponSprite.play('handgun_flash');
+      this.lastFireTime = now;
     }
 
     // Move toward enemy (1/20 chance when idle)
