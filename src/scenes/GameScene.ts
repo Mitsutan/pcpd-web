@@ -331,8 +331,14 @@ export class GameScene extends Phaser.Scene {
     // Allies vs map objects
     this.physics.add.collider(this.allyGroup, this.mapObjectGroup);
 
+    // Allies vs allies (prevent overlap)
+    this.physics.add.collider(this.allyGroup, this.allyGroup);
+
     // Enemies vs map objects
     this.physics.add.collider(this.enemyGroup, this.mapObjectGroup);
+
+    // Enemies vs enemies (prevent overlap)
+    this.physics.add.collider(this.enemyGroup, this.enemyGroup);
 
     // Player bullets vs enemies (group-vs-group)
     this.physics.add.overlap(
