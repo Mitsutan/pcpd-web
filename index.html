@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PCPD - Code 3</title>
+  <style>
+    @font-face {
+      font-family: 'SmileBASIC';
+      src: url('/assets/fonts/SMILEBASIC.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: block;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: 'SmileBASIC', monospace;
+    }
+    #game-container {
+      image-rendering: pixelated;
+    }
+    /* Preload the font by rendering an invisible element */
+    .font-preload {
+      position: absolute;
+      left: -9999px;
+      font-family: 'SmileBASIC';
+      font-size: 1px;
+    }
+  </style>
+</head>
+<body>
+  <span class="font-preload">.</span>
+  <div id="game-container"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

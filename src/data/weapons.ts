@@ -1,0 +1,48 @@
+import { WeaponStats } from '../types';
+
+export const WEAPONS: WeaponStats[] = [
+  {
+    id: 0,
+    name: 'Block17',
+    fireMode: 'semi',
+    range: 5,
+    damage: 5,
+    magazineSize: 11,
+    reloadTime: 60,
+    speedModifier: 1.2,
+    spriteBase: 10,
+  },
+  {
+    id: 1,
+    name: 'M4B1',
+    fireMode: 'auto',
+    range: 10,
+    damage: 4,
+    magazineSize: 30,
+    reloadTime: 120,
+    speedModifier: 1.0,
+    spriteBase: 20,
+  },
+  {
+    id: 2,
+    name: 'PCG1',
+    fireMode: 'semi',
+    range: 15,
+    damage: 50,
+    magazineSize: 5,
+    reloadTime: 240,
+    speedModifier: 0.8,
+    spriteBase: 30,
+  },
+  {
+    id: 3,
+    name: 'M123',
+    fireMode: 'auto',
+    range: 12,
+    damage: 2,
+    magazineSize: 999,
+    reloadTime: 300,
+    speedModifier: 0.5,
+    spriteBase: 40,
+  },
+];
